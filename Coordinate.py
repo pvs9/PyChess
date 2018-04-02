@@ -1,6 +1,6 @@
 class Coordinate(tuple):
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, *args):
         return tuple.__new__(cls)
 
     def __add__(self, other):

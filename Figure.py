@@ -1,14 +1,13 @@
-from Coordinate import Coordinate as Position
-
-
 class Figure:
 
-    def __init__(self, side, position):
+    def __init__(self, board, side, position):
+        self.board = board
         self.side = side
         self.position = position
 
     def __eq__(self, other):
-        if self.side == other.side and \
+        if self.board == other.board and \
+           self.side == other.side and \
            self.position == other.position and \
            self.__class__ == other.__class__:
             return True

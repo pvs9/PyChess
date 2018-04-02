@@ -11,7 +11,6 @@ class Board:
     def __init__(self):
         self.figures = []
         self.currentSide = WHITE
-        self.movesMade = 0
         self.checkmate = False
 
         self.figures.extend([King(self, WHITE, Position(0, 0))])
@@ -25,7 +24,7 @@ class Board:
 
     @staticmethod
     def is_valid_position(self, position):
-        if 0 <= position[0] <= 7 and 0 <= position[1] <= 7:
+        if 0 <= position[0] <= 2 and 0 <= position[1] <= 2:
             return True
         else:
             return False

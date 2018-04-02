@@ -1,5 +1,8 @@
 import pygame
 import os
+import sys
+
+from pygame.locals import *
 
 from Coordinate import Coordinate as Position
 
@@ -22,7 +25,15 @@ class PyChessGUI:
         self.white_king = pygame.transform.scale(self.white_king, (self.square_size, self.square_size))
 
         self.fontDefault = pygame.font.Font(None, 20)
-        pygame.event.wait()
+
+        while 1:
+            event = pygame.event.wait()
+            if event.type is KEYDOWN:
+                pygame.quit()
+                sys.exit(0)
+            if event.type is QUIT:
+                pygame.quit()
+                sys.exit(0)
 
     def convert_to_chess_coords(self, screen_position):
         (x, y) = screen_position

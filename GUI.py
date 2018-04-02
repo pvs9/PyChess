@@ -22,6 +22,7 @@ class PyChessGUI:
         self.white_king = pygame.transform.scale(self.white_king, (self.square_size, self.square_size))
 
         self.fontDefault = pygame.font.Font(None, 20)
+        pygame.event.wait()
 
     def convert_to_chess_coords(self, screen_position):
         (x, y) = screen_position
@@ -34,3 +35,8 @@ class PyChessGUI:
         screen_x = self.boardStart_x + col * self.square_size
         screen_y = self.boardStart_y + row * self.square_size
         return (screen_x, screen_y)
+
+
+if __name__ == "__main__":
+    game = PyChessGUI()
+

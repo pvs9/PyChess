@@ -4,6 +4,7 @@ class Figure:
         self.board = board
         self.side = side
         self.position = position
+        self.if_moved = False
 
     def __eq__(self, other):
         if self.board == other.board and \

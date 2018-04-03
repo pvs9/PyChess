@@ -1,5 +1,4 @@
 from Figure import Figure
-from Coordinate import Coordinate
 
 
 class King(Figure):

@@ -12,12 +12,12 @@ class Board:
         self.figures = []
         self.currentSide = WHITE
         self.checkmate = False
-
-        self.figures.extend([King(self, WHITE, Position(0, 0))])
+        #добавляем в массив фигур фигуры
+        self.figures.extend([King(self, WHITE, (0, 0))])
 
     def get_current_side(self):
         return self.currentSide
-
+''' '''
     @staticmethod
     def move_figure_to_position(self, figure, position):
         figure.position = position

@@ -32,8 +32,6 @@ class PyChessGUI:
         self.white_square = pygame.image.load(os.path.join("images", "white_square.png")).convert()
         self.black_square = pygame.image.load(os.path.join("images", "black_square.png")).convert()
 
-        # self.white_king = pygame.image.load(os.path.join("images", "White_King.png")).convert()
-        # self.white_king = pygame.transform.scale(self.white_king, (self.square_size, self.square_size))
         self.figures = pygame.sprite.Group()
         self.fontDefault = pygame.font.Font(None, 20)
 
@@ -51,13 +49,16 @@ class PyChessGUI:
         screen_y = self.boardStart_y + row * self.square_size
         return tuple([screen_x, screen_y])
 
+    def transform_figure_images(self, board):
+        for figure in board.figures:
+            figure.image = pygame.transform.scale(figure.image, (self.square_size, self.square_size))
+
     def create_sprites(self, board):
         figures = []
         for figure in board.figures:
             figures.append(FigureSprite(pygame.transform.scale(figure.image, (self.square_size, self.square_size)),
                                         self.convert_to_screen_coords(figure.position)))
         self.figures.add(figures)
-
 
     def draw(self, board):
         for i in range(board.size):
@@ -69,7 +70,7 @@ class PyChessGUI:
                     self.screen.blit(self.black_square, (screen_x, screen_y))
         '''будет цикл на отрисовку фигур, как с клетками. пока пусть так висит.
            ДЛЯ ФИГУР - СПРАЙТЫ!'''
-
+        self.transform_figure_images(board)
         self.create_sprites(board)
         self.figures.draw(self.screen)
         # self.screen.blit(self.white_king, (50, 50))

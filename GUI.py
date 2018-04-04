@@ -11,8 +11,8 @@ import os
 import sys
 
 from Move import Move
+from FigureSprite import FigureSprite
 from pygame.locals import *
-
 
 from Board import Board
 
@@ -27,14 +27,14 @@ class PyChessGUI:
         self.boardStart_x = 50
         self.boardStart_y = 50
         pygame.display.set_caption('Python Chess')
-        
+
         self.square_size = 50
         self.white_square = pygame.image.load(os.path.join("images", "white_square.png")).convert()
         self.black_square = pygame.image.load(os.path.join("images", "black_square.png")).convert()
 
-        self.white_king = pygame.image.load(os.path.join("images", "White_King.png")).convert()
-        self.white_king = pygame.transform.scale(self.white_king, (self.square_size, self.square_size))
-
+        # self.white_king = pygame.image.load(os.path.join("images", "White_King.png")).convert()
+        # self.white_king = pygame.transform.scale(self.white_king, (self.square_size, self.square_size))
+        self.figures = pygame.sprite.Group()
         self.fontDefault = pygame.font.Font(None, 20)
 
     # конвертер координат мыши в координаты доски
@@ -43,26 +43,37 @@ class PyChessGUI:
         row = floor((y - self.boardStart_y) / self.square_size)
         col = floor((x - self.boardStart_x) / self.square_size)
         return tuple([col, row])
-        
+
     # и обратно
     def convert_to_screen_coords(self, position):
         (row, col) = position
         screen_x = self.boardStart_x + col * self.square_size
         screen_y = self.boardStart_y + row * self.square_size
         return tuple([screen_x, screen_y])
-        
+
+    def create_sprites(self, board):
+        figures = []
+        for figure in board.figures:
+            figures.append(FigureSprite(pygame.transform.scale(figure.image, (self.square_size, self.square_size)),
+                                        self.convert_to_screen_coords(figure.position)))
+        self.figures.add(figures)
+
+
     def draw(self, board):
         for i in range(board.size):
             for j in range(board.size):
-                (screen_x, screen_y) = self.convert_to_screen_coords((i,j))
+                (screen_x, screen_y) = self.convert_to_screen_coords((i, j))
                 if (i + j) % 2 == 0:
-                   self.screen.blit(self.white_square, (screen_x, screen_y))
+                    self.screen.blit(self.white_square, (screen_x, screen_y))
                 else:
                     self.screen.blit(self.black_square, (screen_x, screen_y))
         '''будет цикл на отрисовку фигур, как с клетками. пока пусть так висит.
-           ДЛЯ ФИГУР - СПРАЙТЫ!'''            
-        self.screen.blit(self.white_king, (50, 50))
-        pygame.display.flip()    
+           ДЛЯ ФИГУР - СПРАЙТЫ!'''
+
+        self.create_sprites(board)
+        self.figures.draw(self.screen)
+        # self.screen.blit(self.white_king, (50, 50))
+        pygame.display.update()
 
     def get_clicked_square(self, board, position):
         (row, col) = self.convert_to_chess_coords((position[0], position[1]))
@@ -71,16 +82,16 @@ class PyChessGUI:
         else:
             return False
 
-'''______________________MAIN_____________________-'''
 
+'''______________________MAIN_____________________-'''
 
 if __name__ == "__main__":
     # инициализация
     game = PyChessGUI()
     board = Board()
     clock = pygame.time.Clock()
-    using_figure = False 
-    
+    using_figure = False
+
     # отрисовка доски (клеточек), фигур
     game.draw(board)
 
@@ -97,7 +108,7 @@ if __name__ == "__main__":
                 if event.key is K_q:
                     pygame.quit()
                     sys.exit(0)
-                    
+
             if (event.type is MOUSEBUTTONDOWN) and (event.button is 1):
                 if using_figure is False:
                     square = game.get_clicked_square(board, event.pos)
@@ -120,6 +131,3 @@ if __name__ == "__main__":
                        иначе - ставим фигуру
                        при надобности - вызываем функцию для удаления фигуры противника
                        флаг = Ф'''
-                       
-                       
-

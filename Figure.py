@@ -1,3 +1,5 @@
+
+
 class Figure:
 
     def __init__(self, board, side, position):
@@ -5,6 +7,7 @@ class Figure:
         self.side = side
         self.position = position
         self.if_moved = False
+        self.image = None
 
     def __eq__(self, other):
         if self.board == other.board and \

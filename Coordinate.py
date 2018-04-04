@@ -1,4 +1,6 @@
 '''пока что не используется'''
+
+
 class Coordinate(tuple): 
         
     def __new__(cls, *args):

@@ -13,13 +13,14 @@ class Board:
         self.checkmate = False
         self.size = 8
         # добавляем в массив фигур фигуры
-        self.figures.extend([King(self, WHITE, (0, 2))])
+        self.figures.extend([King(self, WHITE, (0, 2)),
+                             King(self, BLACK, (0, 0))])
 
     def get_current_side(self):
         return self.current_side
 
     @staticmethod
-    def move_figure_to_position(self, figure, position):
+    def move_figure_to_position(figure, position):
         figure.position = position
 
     @staticmethod

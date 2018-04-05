@@ -9,14 +9,14 @@ class Board:
 
     def __init__(self):
         self.figures = []
-        self.currentSide = WHITE
+        self.current_side = WHITE
         self.checkmate = False
         self.size = 8
         # добавляем в массив фигур фигуры
-        self.figures.extend([King(self, WHITE, (0, 0))])
+        self.figures.extend([King(self, WHITE, (0, 2))])
 
     def get_current_side(self):
-        return self.currentSide
+        return self.current_side
 
     @staticmethod
     def move_figure_to_position(self, figure, position):
@@ -28,3 +28,10 @@ class Board:
             return True
         else:
             return False
+
+    def find_figure(self, position):
+        for figure in self.figures:
+            if figure.position[0] == position[0] and figure.position[1] == position[1]:
+                return figure
+        return None
+

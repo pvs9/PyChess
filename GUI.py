@@ -33,8 +33,11 @@ class PyChessGUI:
         pygame.display.set_caption('Python Chess')
 
         self.square_size = 50
-        self.white_square = pygame.image.load(os.path.join("images", "white_square.png")).convert()
-        self.black_square = pygame.image.load(os.path.join("images", "black_square.png")).convert()
+        self.white_square = pygame.image.load(os.path.join("images", "white_square.png"))#.convert()
+        self.black_square = pygame.image.load(os.path.join("images", "black_square.png"))#.convert()
+        self.frame = pygame.image.load(os.path.join("images", "frame.png"))
+        self.black_frame = pygame.image.load(os.path.join("images", "black_frame.png"))
+        self.white_frame = pygame.image.load(os.path.join("images", "white_frame.png"))
         self.board = board
         self.player_side = side
 
@@ -58,14 +61,7 @@ class PyChessGUI:
     def transform_figure_images(self):
         for figure in self.board.figures:
             figure.image = pygame.transform.scale(figure.image, (self.square_size, self.square_size))
-
-    '''def create_sprites(self, board):
-        figures = []
-        for figure in board.figures:
-            figures.append(FigureSprite(pygame.transform.scale(figure.image, (self.square_size, self.square_size)),
-                                        self.convert_to_screen_coords(figure.position)))
-        self.figures.add(figures)'''
-
+            
     def init_draw(self):
         for i in range(self.board.size):
             for j in range(self.board.size):
@@ -74,11 +70,8 @@ class PyChessGUI:
                     self.screen.blit(self.white_square, (screen_x, screen_y))
                 else:
                     self.screen.blit(self.black_square, (screen_x, screen_y))
-        '''будет цикл на отрисовку фигур, как с клетками. пока пусть так висит.
-           ДЛЯ ФИГУР - СПРАЙТЫ!'''
+        '''будет цикл на отрисовку фигур, как с клетками. пока пусть так висит.'''
         self.transform_figure_images()
-        # self.create_sprites(board)
-        # self.figures.draw(self.screen)
         self.screen.blit(self.board.figures[0].image, self.convert_to_screen_coords(self.board.figures[0].position))
         self.screen.blit(self.board.figures[1].image, self.convert_to_screen_coords(self.board.figures[1].position))
         pygame.display.update()
@@ -89,11 +82,34 @@ class PyChessGUI:
             return tuple([col, row])
         else:
             return None
-
+    
+    def highlight_valid_moves(self, figure):
+         for i in range(self.board.size):
+                for j in range(self.board.size):
+                    (screen_x, screen_y) = self.convert_to_screen_coords((i, j))
+                    if figure.is_valid_move(tuple([i, j])) == True :
+                            self.screen.blit(self.frame, (screen_x, screen_y))
+                            
+    def unhighlight_valid_moves(self):
+        for i in range(self.board.size):
+                for j in range(self.board.size):
+                    (screen_x, screen_y) = self.convert_to_screen_coords((i, j))
+                    if (i + j) % 2 == 0:
+                        self.screen.blit(self.white_frame, (screen_x, screen_y))
+                    else:
+                        self.screen.blit(self.black_frame, (screen_x, screen_y))
+                pygame.display.update()
+        
+    
     def pick_figure(self, position):
         figure = self.board.find_figure(position)
         if figure is not None and figure.side is self.player_side:
             move = Move(figure, None)
+            # выделяем клетку с фигурой
+            self.screen.blit(self.frame, self.convert_to_screen_coords(move.old_pos))
+            # выделяем доступные для хода клетки
+            self.highlight_valid_moves(figure)
+            pygame.display.update()
             return move
         else:
             return None
@@ -103,8 +119,9 @@ class PyChessGUI:
             self.screen.blit(self.white_square, self.convert_to_screen_coords(move.old_pos))
         else:
             self.screen.blit(self.black_square, self.convert_to_screen_coords(move.old_pos))
-        game.screen.blit(move.piece.image, game.convert_to_screen_coords(move.piece.position))
-        pygame.display.update()
+        self.screen.blit(move.piece.image, game.convert_to_screen_coords(move.piece.position))
+        self.unhighlight_valid_moves()
+        
 
 
 
@@ -135,27 +152,23 @@ if __name__ == "__main__":
                 if event.key is K_q:
                     pygame.quit()
                     sys.exit(0)
-
+            # список реакций на ЛКМ
             if (event.type is MOUSEBUTTONDOWN) and (event.button is 1):
+                # если сейчас нет активной фигуры
                 if using_figure is False:
+                    #вызываем 
                     square = game.get_clicked_square(event.pos)
                     if square is not None:
                         # вызов функции на проверку наличия валидной фигуры
-                        move = game.pick_figure(square)
+                        move = game.pick_figure(square) # ставим move на текущее положение фигуры
                         if move is not None:
                             using_figure = True
-                        else:
-                            continue
-                    else:
-                        continue
-                    '''
-                       ...проверяется наличие корректной фигуры по этим координатам
-                       иначе - берем фигуру
-                       отрисовываем доступные для хода клетки
-                       флаг = Тру'''
+                # если есть активная фигура
                 else:
                     square = game.get_clicked_square(event.pos)
+                    # если кликнули по квадрату при активной фигуре
                     if square is not None:
+                        # 
                         move.new_pos = square
                         if move.piece.is_valid_move(square):
                             game.board.move_figure_to_position(move.piece, move.new_pos)
@@ -163,13 +176,3 @@ if __name__ == "__main__":
                             game.move_draw(move)
                         else:
                             using_figure = False
-                            continue
-                    else:
-                        continue
-                    '''-когда флаг == Тру
-                       мышкой выбираем клетку
-                       проверка на совпадение с доступной
-                       недоступная -> continue
-                       иначе - ставим фигуру
-                       при надобности - вызываем функцию для удаления фигуры противника
-                       флаг = Ф'''

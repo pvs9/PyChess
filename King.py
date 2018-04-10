@@ -21,7 +21,7 @@ class King(Figure):
     def is_valid_move(self, position):
         if abs(position[0] - self.position[0]) <= 1 and abs(position[1] - self.position[1]) <= 1:
             figure = self.board.find_figure(position)
-            if (figure is not None and figure.side is not self.side) or (figure is None):
+            if (figure is not None and figure.side is not self.side and figure.name != "King") or (figure is None):
                 return True
             else:
                 return False

@@ -49,14 +49,14 @@ class PyChessGUI:
         (x, y) = screen_position
         row = floor((y - self.board_start_y) / self.square_size)
         col = floor((x - self.board_start_x) / self.square_size)
-        return tuple([col, row])
+        return col, row
 
     # и обратно
     def convert_to_screen_coords(self, position):
         (col, row) = position
         screen_x = self.board_start_x + col * self.square_size
         screen_y = self.board_start_y + row * self.square_size
-        return tuple([screen_x, screen_y])
+        return screen_x, screen_y
 
     def transform_figure_images(self):
         for figure in self.board.figures:
@@ -85,10 +85,10 @@ class PyChessGUI:
     
     def highlight_valid_moves(self, figure):
          for i in range(self.board.size):
-                for j in range(self.board.size):
-                    (screen_x, screen_y) = self.convert_to_screen_coords((i, j))
-                    if figure.is_valid_move(tuple([i, j])) == True :
-                            self.screen.blit(self.frame, (screen_x, screen_y))
+            for j in range(self.board.size):
+                (screen_x, screen_y) = self.convert_to_screen_coords((i, j))
+                if figure.is_valid_move((i, j)) == True :
+                    self.screen.blit(self.frame, (screen_x, screen_y))
                             
     def unhighlight_valid_moves(self):
         for i in range(self.board.size):
@@ -163,6 +163,7 @@ if __name__ == "__main__":
                         move = game.pick_figure(square) # ставим move на текущее положение фигуры
                         if move is not None:
                             using_figure = True
+                            print(move.piece.attacks_positions())
                 # если есть активная фигура
                 else:
                     square = game.get_clicked_square(event.pos)

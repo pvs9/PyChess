@@ -1,8 +1,6 @@
 '''
 текущие цели:
 ввести перемещение фигур
-ввести сокращенные имена для шахматных координат (мб еще фигур)
-ввести спрайты для фигур
 '''
 from math import floor
 from typing import Optional
@@ -61,7 +59,8 @@ class PyChessGUI:
     def transform_figure_images(self):
         for figure in self.board.figures:
             figure.image = pygame.transform.scale(figure.image, (self.square_size, self.square_size))
-            
+    
+    # начальная отрисовка всего        
     def init_draw(self):
         for i in range(self.board.size):
             for j in range(self.board.size):
@@ -70,12 +69,12 @@ class PyChessGUI:
                     self.screen.blit(self.white_square, (screen_x, screen_y))
                 else:
                     self.screen.blit(self.black_square, (screen_x, screen_y))
-        '''будет цикл на отрисовку фигур, как с клетками. пока пусть так висит.'''
         self.transform_figure_images()
-        self.screen.blit(self.board.figures[0].image, self.convert_to_screen_coords(self.board.figures[0].position))
-        self.screen.blit(self.board.figures[1].image, self.convert_to_screen_coords(self.board.figures[1].position))
+        for i in range (0, len(self.board.figures)):
+            self.screen.blit(self.board.figures[i].image, self.convert_to_screen_coords(self.board.figures[i].position))
         pygame.display.update()
-
+    
+    # проверяем была ли кликнута клетка, если да - возвращаем координаты
     def get_clicked_square(self, position):
         (col, row) = self.convert_to_chess_coords((position[0], position[1]))
         if self.board.is_valid_position(self.board, (row, col)):
@@ -83,13 +82,15 @@ class PyChessGUI:
         else:
             return None
     
+    # выделяем доступные для хода клетки, при клике на фигуру
     def highlight_valid_moves(self, figure):
          for i in range(self.board.size):
             for j in range(self.board.size):
                 (screen_x, screen_y) = self.convert_to_screen_coords((i, j))
                 if figure.is_valid_move((i, j)) == True :
                     self.screen.blit(self.frame, (screen_x, screen_y))
-                            
+    
+    # снимаем выделение доступных дял хода клеток                        
     def unhighlight_valid_moves(self):
         for i in range(self.board.size):
                 for j in range(self.board.size):
@@ -100,7 +101,7 @@ class PyChessGUI:
                         self.screen.blit(self.black_frame, (screen_x, screen_y))
                 pygame.display.update()
         
-    
+    # 
     def pick_figure(self, position):
         figure = self.board.find_figure(position)
         if figure is not None and figure.side is self.player_side:
@@ -174,6 +175,9 @@ if __name__ == "__main__":
                         if move.piece.is_valid_move(square):
                             game.board.move_figure_to_position(move.piece, move.new_pos)
                             using_figure = False
+                            game.unhighlight_valid_moves()
                             game.move_draw(move)
                         else:
                             using_figure = False
+                            game.unhighlight_valid_moves()
+                    

@@ -13,9 +13,9 @@ class King(Figure):
     def __init__(self, board, side, position):
         super(King, self).__init__(board, side, position)
         if side is WHITE:
-            self.image = pygame.image.load(os.path.join("images", "White_King.png")).convert()
+            self.image = pygame.image.load(os.path.join("images", "white_king.png")).convert()
         else:
-            self.image = pygame.image.load(os.path.join("images", "Black_King.png")).convert()
+            self.image = pygame.image.load(os.path.join("images", "black_king.png")).convert()
         self.name = "King"
         
     def valid_moves(self):
